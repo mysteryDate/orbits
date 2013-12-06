@@ -1,0 +1,24 @@
+* {
+	-mox-user-select: none;
+	-webkit-user-select: none;
+}
+
+html, body {
+	height: 100%;
+}
+
+h1 {
+	color: pink;
+	-webkit-transition: color 2s;
+}
+
+#container {
+	height: calc(100% - 8em);
+	width: 100%;
+	border: 1px solid black;
+}
+
+#foo {
+	stroke: blue;
+	-webkit-transition: stroke 2s;
+}
