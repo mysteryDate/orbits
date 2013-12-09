@@ -39,37 +39,12 @@ function calculate_next_position(mass, position, velocity, gavitational_force)
 	planets[i].planetData('velocity') = v1;
 }
 
-//An object storing a single planet
-function Planet(args) 
-{
-	var _self = this;
-	this.position = args.position;
-	this.velocity = args.velocity;
-	this.mass = args.mass;
-	this.radius = args.radius;
-
-	this.create = function() 
-	{
-		_self.raphael = paper.circle(
-			_self.position[0],
-			_self.position[1],
-			_self.radius);
-	}
-}
-
 $(document).ready(function(){
-	$('svg').on('mousemove', function(e){
-		console.log(this);
-	});
-	$('#foo').append('<animate attributeName="cy" from="50" to="200" dur="3s"/>');
-
 
 	paper = new Raphael('container', '100%', '100%'); 
 	circle = paper.circle(50, 40, 10);
 
 	handlers();
-
-	testCirc = new Planet({'position': [625,215], 'radius':100});
 
 });
 
@@ -79,12 +54,19 @@ function create_planet(clickEvent)
 	var y = clickEvent.offsetY;
 
 	var new_planet = paper.circle(x, y, 0);
-	new_planet.animate({'r': 200}, 2000);
+	new_planet.animate({'r': 200}, 5000);
+	var v = paper.path('M'+x+' '+y+'L'+x+' '+y);
 
-
-	$(paper.canvas).on('mouseup.create_planet', function(e) {
-		console.log(e.offsetX - x);
-		console.log(clickEvent.timeStamp - e.timeStamp);
+	$(paper.canvas).on('mousemove.create_planet', function(e)
+	{
+		v.attr('path', 'M'+x+' '+y+'L'+e.offsetX+' '+e.offsetY);
+		// console.log(e);
+	});
+	$(paper.canvas).on('mouseup.create_planet', function(e) 
+	{
+		new_planet.stop();
+		new_planet.data('velocity', [e.offsetX - x, e.offsetY - y]);
+		v.remove();
 		$(paper.canvas).off('.create_planet');
 	});
 
@@ -107,7 +89,6 @@ function handlers() {
 		},
 		mousedown: function(e){
 			create_planet(e);
-			circle.attr({'cx': e.offsetX, 'cy': e.offsetY});
 		}
 	});
 
