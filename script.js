@@ -2,14 +2,44 @@
 var GRAVITY = 1; // A coefficient for our gravity
 // hint: Fg = G * m1 * m2 / r^2
 var DENSITY = 1; // Set a standard density for now.
-var TIME_STEP = 1; // One unit of time
+var TIME_STEP = 0.1; // One unit of time
 
 var paper;
 var planets = []; // An array containing all planets
 var circle;
 var testCirc;
 
-function update_display() 
+
+function loop() 
+{
+	// clear();
+	update();
+	draw();
+	queue();
+}
+
+var lastRequest;
+function stopLoop()
+{
+	window.cancelAnimationFrame(lastRequest);
+}
+
+function queue() 
+{
+  	lastRequest = window.requestAnimationFrame(loop);
+}
+
+function update()
+{
+	for (var i = 0; i < planets.length; i++) {
+		var v = planets[i].data('velocity');
+		var p = [planets[i].attr('cx'),  planets[i].attr('cy')];
+		var p1 = [p[0] + v[0]*TIME_STEP, p[1] + v[1]*TIME_STEP];
+		planets[i].data('nextPosition', p1);
+	};
+}
+
+function draw() 
 {
 	for (var i = 0; i < planets.length; i++) {
 		var nextPosition = planets[i].data('nextPosition');
@@ -20,7 +50,9 @@ function update_display()
 	};
 }
 
-function find_gravitational_force(planet)
+
+
+function calculate_gravitational_forces()
 {
 
 }
@@ -42,9 +74,9 @@ function calculate_next_position(mass, position, velocity, gavitational_force)
 $(document).ready(function(){
 
 	paper = new Raphael('container', '100%', '100%'); 
-	circle = paper.circle(50, 40, 10);
-
 	handlers();
+
+	// loop();
 
 });
 
@@ -68,6 +100,7 @@ function create_planet(clickEvent)
 		new_planet.data('velocity', [e.offsetX - x, e.offsetY - y]);
 		v.remove();
 		$(paper.canvas).off('.create_planet');
+		loop();
 	});
 
 	planets.push(new_planet);
@@ -108,6 +141,7 @@ function handlers() {
 			});
 		},
 		mousedown: function(e){
+			stopLoop();
 			create_planet(e);
 		}
 	});
