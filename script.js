@@ -73,6 +73,26 @@ function create_planet(clickEvent)
 	planets.push(new_planet);
 }
 
+function Vector(x, y) 
+{
+	this.x = x || 0;
+	this.y = y || 0;
+
+	this.add = function(vector) {
+		this.x += vector.x;
+		this.y += vector.y;
+	}
+
+	this.getMagnitude = function() {
+		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
+
+	this.multiply = function(scalar) {
+		this.x *= scalar;
+		this.y *= scalar;
+	}
+}
+
 function handlers() {
 
 	$(paper.canvas).on({
