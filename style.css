@@ -7,18 +7,8 @@ html, body {
 	height: 100%;
 }
 
-h1 {
-	color: pink;
-	-webkit-transition: color 2s;
-}
-
 #container {
-	height: calc(100% - 8em);
+	height: 100%;
 	width: 100%;
-	border: 1px solid black;
-}
-
-#foo {
-	stroke: blue;
-	-webkit-transition: stroke 2s;
+	/*border: 1px solid black;*/
 }
