@@ -4,6 +4,9 @@ var GRAVITY = 1; // A coefficient for our gravity
 var DENSITY = 1; // Set a standard density for now.
 var TIME_STEP = 0.1; // One unit of time
 
+// Number of pixels of escape before planet is deleted
+var BOUNDARY = 100; 
+
 var paper;
 var Planets = []; // An array containing all Planets
 var circle;
@@ -14,7 +17,6 @@ var windowHeight = $(window).height();
 
 function loop() 
 {
-	// clear();
 	update();
 	draw();
 	queue();
@@ -34,30 +36,26 @@ function queue()
 function update()
 {
 	for (var i = 0; i < Planets.length; i++) {
-		var v = Planets[i].data('velocity');
-		var p = new Vector(Planets[i].attr('cx'),  Planets[i].attr('cy'));
-		var scaledV = v.getMultiple(TIME_STEP);
-		p.add( scaledV );
-		// var p1 = [p[0] + v[0]*TIME_STEP, p[1] + v[1]*TIME_STEP];
-		Planets[i].data('nextPosition', p);
-		if(p.x < 0 || p.x > windowWidth || p.y < 0 || p.y > windowHeight) {
-			Planets[i].remove();
-			Planets.splice(i,1);
-		}
+		Planets[i].move();
 	};
 }
 
 function draw() 
 {
 	for (var i = 0; i < Planets.length; i++) {
-		var nextPosition = Planets[i].data('nextPosition');
-		Planets[i].attr({
-			'cx': nextPosition.x,
-			'cy': nextPosition.y
-		});
+		var p = Planets[i].position;
+		if(p.x < 0 - BOUNDARY || p.x > windowWidth + BOUNDARY 
+				|| p.y < 0 - BOUNDARY || p.y > windowHeight + BOUNDARY) {
+			Planets[i].circle.remove();
+			Planets.splice(i,1);
+		}
+		else
+			Planets[i].circle.attr({
+				'cx': p.x,
+				'cy': p.y
+			});
 	};
 }
-
 
 
 function calculate_gravitational_forces()
@@ -66,27 +64,20 @@ function calculate_gravitational_forces()
 	var gravityVectors = Matrix2d(Planets.length, Planets.length);
 
 	for (var i = 0; i < Planets.length; i++) {
+		var m1 = Planets[i].mass;
+		var p1 = Planets[i].position;
 
 		for (var j = i+1; j < Planets.length; j++) {
-			
-
-			console.log(Planets[i].node, Planets[j].node); 
+			var m2 = Planets[j].mass;
+			var p2 = Planets[j].position
+			var d = p1.getSum(p2.scale(-1));
+			var Fx = GRAVITY*m1*m2/Math.pow(d.x,2);
+			var Fy = GRAVITY*m1*m2/Math.pow(d.y,2);
+			gravityVectors[i][j] = new Vector(Fx, Fy);
 		};
 	};
-}
 
-// Mass is a scalar, position, velocity and gravitaional_force are two dimensional vectors
-function calculate_next_position(mass, position, velocity, gavitational_force)
-{
-	var m = mass;
-	var v0 = velocity;
-	var p0 = position;
-	var Fg = gravitaional_force;
-	
-	var a = [F[0]/m, F[1]/m];
-	var v1 = [v0[0] + a[0], v0[1] + a[1]];
-
-	Planets[i].planetData('velocity') = v1;
+	console.log(gravityVectors);
 }
 
 $(document).ready(function(){
@@ -103,10 +94,11 @@ function create_planet(clickEvent)
 	var x = clickEvent.offsetX;
 	var y = clickEvent.offsetY;
 
-	var new_planet = paper.circle(x, y, 0);
-	new_planet.attr('fill', 'black');
-	new_planet.animate({'r': 200}, 5000);
+	var circle = paper.circle(x, y, 0);
+	circle.attr('fill', 'black');
+	circle.animate({'r': 200}, 5000);
 	var vPath = paper.path('M'+x+' '+y+'L'+x+' '+y);
+	var new_planet = new Planet(circle, new Vector(x,y));
 
 	$(paper.canvas).on('mousemove.create_planet', function(e)
 	{
@@ -115,10 +107,16 @@ function create_planet(clickEvent)
 	});
 	$(paper.canvas).on('mouseup.create_planet', function(e) 
 	{
-		new_planet.stop();
+		circle.stop();
+
 		var v = new Vector(e.offsetX - x, e.offsetY - y);
-		new_planet.data('velocity', v);
-		new_planet.data('mass', DENSITY*new_planet.attr('r'));
+		var r = circle.attr('r');
+
+		new_planet.velocity = v;
+		new_planet.acceleration = new Vector(0, 10);
+		new_planet.mass = DENSITY*r;
+		new_planet.radius = r;
+
 		vPath.remove();
 		$(paper.canvas).off('.create_planet');
 		loop();
