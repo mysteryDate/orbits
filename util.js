@@ -19,6 +19,10 @@ function Vector(x, y)
 		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
 
+	this.getAngle = function() {
+		return Math.atan2(this.y,this.x);
+	}
+
 	this.getSum = function(vector) {
 		var x = this.x + vector.x;
 		var y = this.y + vector.y;
@@ -33,6 +37,11 @@ function Vector(x, y)
 		return scaled;
 	}
 }
+
+// Creates a new vector given an angle and magnitude
+Vector.fromAngle = function(angle, magnitude) {
+	return new Vector(magnitude * Math.cos(angle), magnitude * Math.sin(angle));
+};
 
 // m, n are the dimensions of the matrix
 function Matrix2d(m, n)
