@@ -5,10 +5,12 @@ var DENSITY = 1; // Set a standard density for now.
 var TIME_STEP = 0.1; // One unit of time
 
 var paper;
-var planets = []; // An array containing all planets
+var Planets = []; // An array containing all Planets
 var circle;
 var testCirc;
 
+var windowWidth = $(window).width();
+var windowHeight = $(window).height();
 
 function loop() 
 {
@@ -31,21 +33,27 @@ function queue()
 
 function update()
 {
-	for (var i = 0; i < planets.length; i++) {
-		var v = planets[i].data('velocity');
-		var p = [planets[i].attr('cx'),  planets[i].attr('cy')];
-		var p1 = [p[0] + v[0]*TIME_STEP, p[1] + v[1]*TIME_STEP];
-		planets[i].data('nextPosition', p1);
+	for (var i = 0; i < Planets.length; i++) {
+		var v = Planets[i].data('velocity');
+		var p = new Vector(Planets[i].attr('cx'),  Planets[i].attr('cy'));
+		var scaledV = v.getMultiple(TIME_STEP);
+		p.add( scaledV );
+		// var p1 = [p[0] + v[0]*TIME_STEP, p[1] + v[1]*TIME_STEP];
+		Planets[i].data('nextPosition', p);
+		if(p.x < 0 || p.x > windowWidth || p.y < 0 || p.y > windowHeight) {
+			Planets[i].remove();
+			Planets.splice(i,1);
+		}
 	};
 }
 
 function draw() 
 {
-	for (var i = 0; i < planets.length; i++) {
-		var nextPosition = planets[i].data('nextPosition');
-		planets[i].attr({
-			'cx': nextPosition[0],
-			'cy': nextPosition[1]
+	for (var i = 0; i < Planets.length; i++) {
+		var nextPosition = Planets[i].data('nextPosition');
+		Planets[i].attr({
+			'cx': nextPosition.x,
+			'cy': nextPosition.y
 		});
 	};
 }
@@ -54,7 +62,17 @@ function draw()
 
 function calculate_gravitational_forces()
 {
+	// A Planets.length by Planets.length matrix of all gravity vectors
+	var gravityVectors = Matrix2d(Planets.length, Planets.length);
 
+	for (var i = 0; i < Planets.length; i++) {
+
+		for (var j = i+1; j < Planets.length; j++) {
+			
+
+			console.log(Planets[i].node, Planets[j].node); 
+		};
+	};
 }
 
 // Mass is a scalar, position, velocity and gravitaional_force are two dimensional vectors
@@ -68,7 +86,7 @@ function calculate_next_position(mass, position, velocity, gavitational_force)
 	var a = [F[0]/m, F[1]/m];
 	var v1 = [v0[0] + a[0], v0[1] + a[1]];
 
-	planets[i].planetData('velocity') = v1;
+	Planets[i].planetData('velocity') = v1;
 }
 
 $(document).ready(function(){
@@ -86,44 +104,32 @@ function create_planet(clickEvent)
 	var y = clickEvent.offsetY;
 
 	var new_planet = paper.circle(x, y, 0);
+	new_planet.attr('fill', 'black');
 	new_planet.animate({'r': 200}, 5000);
-	var v = paper.path('M'+x+' '+y+'L'+x+' '+y);
+	var vPath = paper.path('M'+x+' '+y+'L'+x+' '+y);
 
 	$(paper.canvas).on('mousemove.create_planet', function(e)
 	{
-		v.attr('path', 'M'+x+' '+y+'L'+e.offsetX+' '+e.offsetY);
+		vPath.attr('path', 'M'+x+' '+y+'L'+e.offsetX+' '+e.offsetY);
 		// console.log(e);
 	});
 	$(paper.canvas).on('mouseup.create_planet', function(e) 
 	{
 		new_planet.stop();
-		new_planet.data('velocity', [e.offsetX - x, e.offsetY - y]);
-		v.remove();
+		var v = new Vector(e.offsetX - x, e.offsetY - y);
+		new_planet.data('velocity', v);
+		new_planet.data('mass', DENSITY*new_planet.attr('r'));
+		vPath.remove();
 		$(paper.canvas).off('.create_planet');
 		loop();
 	});
 
-	planets.push(new_planet);
+	Planets.push(new_planet);
 }
 
-function Vector(x, y) 
-{
-	this.x = x || 0;
-	this.y = y || 0;
-
-	this.add = function(vector) {
-		this.x += vector.x;
-		this.y += vector.y;
-	}
-
-	this.getMagnitude = function() {
-		return Math.sqrt(this.x * this.x + this.y * this.y);
-	}
-
-	this.multiply = function(scalar) {
-		this.x *= scalar;
-		this.y *= scalar;
-	}
+function onresize() {
+	windowWidth = $(window).width();
+	windowHeight = $(window).height();
 }
 
 function handlers() {
@@ -145,6 +151,4 @@ function handlers() {
 			create_planet(e);
 		}
 	});
-
-
 }
