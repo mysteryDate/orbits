@@ -1,11 +1,13 @@
 "use strict";
 var GRAVITY = 10; // A coefficient for our gravity
 // hint: Fg = G * m1 * m2 / r^2
-var DENSITY = 1000; // Set a standard density for now.
-var TIME_STEP = 0.1; // One unit of time
+var DENSITY = 100; // Set a standard density for now.
+var TIME_STEP = 0.05; // One unit of time
+var MAX_SIZE = 100;
+var GROW_TIME = 10000;
 
 // Number of pixels of escape before planet is deleted
-var BOUNDARY = 100; 
+var BOUNDARY = 1000; 
 
 var paper;
 var Planets = []; // An array containing all Planets
@@ -15,10 +17,12 @@ var testCirc;
 var windowWidth = $(window).width();
 var windowHeight = $(window).height();
 
+var looping = false;
 var accelerationLines = false;
 
 function loop() 
 {
+	looping = true;
 	update();
 	draw();
 	queue();
@@ -27,6 +31,7 @@ function loop()
 var lastRequest;
 function stopLoop()
 {
+	looping = false;
 	window.cancelAnimationFrame(lastRequest);
 }
 
@@ -66,6 +71,7 @@ function calculate_gravitational_forces()
 {
 	// A Planets.length by Planets.length matrix of all gravity vectors
 	var gravityVectors = [];
+	var $fb = $('#feedback tbody tr td');
 
 	for (var i = 0; i < Planets.length; i++) {
 		gravityVectors[i] = new Vector;
@@ -81,10 +87,14 @@ function calculate_gravitational_forces()
 			var p2 = Planets[j].position;
 			var r2 = Planets[j].radius;
 			var d = p2.getSum(p1.scale(-1));
-			if( d.getMagnitude() <= r1 + r2 ) 
+			var dMag = d.getMagnitude();
+			// $fb.text(Math.round( dMag - (r1 + r2)) );
+			if( dMag <= r1 + r2 ) {
 				collide(Planets[i], Planets[j]);
+				console.log(dMag);
+			}
 			else {
-				var Fmag = GRAVITY*m1*m2/Math.pow(d.getMagnitude(),2);
+				var Fmag = GRAVITY*m1*m2/Math.pow(dMag,2);
 				var F = Vector.fromAngle(d.getAngle(), Fmag);
 				gravityVectors[i].add(F);
 				gravityVectors[j].add(F.scale(-1)); 
@@ -97,10 +107,15 @@ function calculate_gravitational_forces()
 	};
 }
 
-function collide(p1, p2) 
+function collide(body1, body2) 
 {
-	p1.velocity.multiply(-1);
-	p2.velocity.multiply(-1);
+	var p1 = body1.velocity.scale(body1.mass);
+	var p2 = body2.velocity.scale(body2.mass);
+
+	var E1 = 0.5*body1.mass*Math.pow(body1.velocity.getMagnitude(),2)
+
+	body1.velocity = p2.scale(1/body1.mass);
+	body2.velocity = p1.scale(1/body2.mass);
 }
 
 $(document).ready(function(){
@@ -118,8 +133,8 @@ function create_planet(clickEvent)
 	var y = clickEvent.offsetY;
 
 	var circle = paper.circle(x, y, 0);
-	circle.attr('fill', 'black');
-	circle.animate({'r': 200}, 5000);
+	//circle.attr('fill', 'black');
+	circle.animate({'r': MAX_SIZE}, GROW_TIME);
 	var vPath = paper.path('M'+x+' '+y+'L'+x+' '+y);
 	vPath.attr('stroke','red');
 	var new_planet = new Planet(circle, new Vector(x,y));
@@ -138,7 +153,7 @@ function create_planet(clickEvent)
 
 		new_planet.velocity = v;
 		new_planet.acceleration = new Vector(0, 0);
-		new_planet.mass = DENSITY*r;
+		new_planet.mass = DENSITY*Math.PI*r*r;
 		new_planet.radius = r;
 
 		vPath.remove();
@@ -171,6 +186,16 @@ function handlers() {
 		mousedown: function(e){
 			stopLoop();
 			create_planet(e);
+		}
+	});
+
+	$('body').on('keypress', function(e){
+		console.log(e.which);
+		if( e.which == 32 ) {  // Spacebar
+			if(looping == true)
+				stopLoop();
+			else
+				loop();
 		}
 	});
 }
