@@ -23,12 +23,12 @@ function Vector(x, y)
 		return Math.atan2(this.y,this.x);
 	}
 
-	this.getSum = function(vector) {
-		var x = this.x + vector.x;
-		var y = this.y + vector.y;
-		var sum = new Vector(x, y);
-		return sum;
-	}
+	// this.getSum = function(vector) {
+	// 	var x = this.x + vector.x;
+	// 	var y = this.y + vector.y;
+	// 	var sum = new Vector(x, y);
+	// 	return sum;
+	// }
 
 	// Returns a scaled version of the vector
 	this.scale = function(scalar) {
@@ -55,20 +55,28 @@ Vector.fromAngle = function(angle, magnitude) {
 Vector.angleBetween = function(A, B) {
 	// The dot product
 	var AdotB = (A.x * B.x) + (A.y * B.y);
+	var Amag = A.getMagnitude();
+	var Bmag = B.getMagnitude();
+
+	var cos = AdotB/(Amag*Bmag);
+	// Rounding erros can make the ratio slightly more than one, in this case
+	if ( Math.abs(cos) > 1) cos = 1;
+
+	return Math.acos( cos );
 }
 
 // m, n are the dimensions of the matrix
-function Matrix2d(m, n)
-{
-	var matrix = []
-	for (var i = 0; i < m; i++) {
-		matrix[i] = [];
-		for (var j = 0; j < n; j++) {
-			matrix[i].push(0);
-		};
-	};
-	return matrix;
-}
+// function Matrix2d(m, n)
+// {
+// 	var matrix = []
+// 	for (var i = 0; i < m; i++) {
+// 		matrix[i] = [];
+// 		for (var j = 0; j < n; j++) {
+// 			matrix[i].push(0);
+// 		};
+// 	};
+// 	return matrix;
+// }
 
 // A planet on the screen
 function Planet(circle, position, velocity, acceleration) 

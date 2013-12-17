@@ -112,6 +112,11 @@ function collide(body1, body2, d)
 {
 	if (!d ) d = Vector.add(p2, p1.scale(-1));
 
+	// The angles between the velocity vectors and the displacement between the two objects
+	var theta1 = Vector.angleBetween(body1.velocity, d);
+	var theta2 = Vector.angleBetween(body2.velocity, d);
+	console.log(theta1, theta2);
+	console.log(isNaN(theta1),isNaN(theta2));
 	var v1 = body1.velocity;
 	var v2 = body2.velocity;
 
@@ -129,7 +134,7 @@ function collide(body1, body2, d)
 	var E2 = 0.5*( body1.mass*Math.pow(body1.velocity.getMagnitude(),2) +
 		body2.mass*Math.pow(body2.velocity.getMagnitude(),2) );
 
-	console.log(E2 - E1);
+	// console.log(E2 - E1);
 }
 
 $(document).ready(function(){
