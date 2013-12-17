@@ -2,12 +2,12 @@
 var GRAVITY = 10; // A coefficient for our gravity
 // hint: Fg = G * m1 * m2 / r^2
 var DENSITY = 100; // Set a standard density for now.
-var TIME_STEP = 0.05; // One unit of time
+var TIME_STEP = 0.03; // One unit of time
 var MAX_SIZE = 100;
 var GROW_TIME = 10000;
 
 // Number of pixels of escape before planet is deleted
-var BOUNDARY = 1000; 
+var BOUNDARY = 50; 
 
 var paper;
 var Planets = []; // An array containing all Planets
@@ -108,31 +108,38 @@ function calculate_gravitational_forces()
 }
 
 // Arguments are the two colliding bodies and a vector of the distance between them
-function collide(body1, body2, d) 
+function collide(b1, b2, d) 
 {
 	if (!d ) d = Vector.add(p2, p1.scale(-1));
 
-	// The angles between the velocity vectors and the displacement between the two objects
-	var theta1 = Vector.angleBetween(body1.velocity, d);
-	var theta2 = Vector.angleBetween(body2.velocity, d);
-	console.log(theta1, theta2);
-	console.log(isNaN(theta1),isNaN(theta2));
-	var v1 = body1.velocity;
-	var v2 = body2.velocity;
+	var u1 = b1.velocity;
+	var u2 = b2.velocity;
 
-	var v1dotd = (v1.x*d.x + v1.y*d.y) / (v1.getMagnitude()*d.getMagnitude() );
+	var E1 = 0.5*( b1.mass*Math.pow(b1.velocity.getMagnitude(),2) +
+		b2.mass*Math.pow(b2.velocity.getMagnitude(),2) );
 
-	var p1 = body1.velocity.scale(body1.mass);
-	var p2 = body2.velocity.scale(body2.mass);
+	// component of initial velocity projected onto d
+	var u1d = d.scale( Vector.dotProduct(u1,d) / (Math.pow(d.getMagnitude(),2)) );
+	var u2d = d.scale( Vector.dotProduct(u2,d) / (Math.pow(d.getMagnitude(),2)) );
+	// var u1d = new Vector( Vector.dotProduct(b1.velocity, d.getUnitVector), Vector.angleBetween(b1.velocity, d) );
+	// var u2d = new Vector( Vector.dotProduct(b2.velocity, d.getUnitVector), Vector.angleBetween(b2.velocity, d) );
 
-	var E1 = 0.5*( body1.mass*Math.pow(body1.velocity.getMagnitude(),2) +
-		body2.mass*Math.pow(body2.velocity.getMagnitude(),2) );
+	// Perpendicular components of initial velocities
+	var u1n = Vector.add(b1.velocity, u1d.scale(-1));
+	var u2n = Vector.add(b2.velocity, u2d.scale(-1));
 
-	body1.velocity = p2.scale(1/body1.mass);
-	body2.velocity = p1.scale(1/body2.mass);
+	// New parallel components
+	var v1d = ( Vector.add( u1d.scale(b1.mass - b2.mass), u2d.scale(2*b2.mass) ) ).scale(1/(b1.mass + b2.mass));
+	var v2d = ( Vector.add( u2d.scale(b2.mass - b1.mass), u1d.scale(2*b1.mass) ) ).scale(1/(b1.mass + b2.mass));
 
-	var E2 = 0.5*( body1.mass*Math.pow(body1.velocity.getMagnitude(),2) +
-		body2.mass*Math.pow(body2.velocity.getMagnitude(),2) );
+	var v1 = Vector.add(v1d, u1n);
+	var v2 = Vector.add(v2d, u2n);
+
+	b1.velocity = v1;
+	b2.velocity = v2;
+
+	var E2 = 0.5*( b1.mass*Math.pow(b1.velocity.getMagnitude(),2) +
+		b2.mass*Math.pow(b2.velocity.getMagnitude(),2) );
 
 	// console.log(E2 - E1);
 }
@@ -151,7 +158,7 @@ function create_planet(clickEvent)
 	var x = clickEvent.offsetX;
 	var y = clickEvent.offsetY;
 
-	var circle = paper.circle(x, y, 0);
+	var circle = paper.circle(x, y, 5);
 	//circle.attr('fill', 'black');
 	circle.animate({'r': MAX_SIZE}, GROW_TIME);
 	var vPath = paper.path('M'+x+' '+y+'L'+x+' '+y);
