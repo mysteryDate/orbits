@@ -71,7 +71,7 @@ function calculate_gravitational_forces()
 {
 	// A Planets.length by Planets.length matrix of all gravity vectors
 	var gravityVectors = [];
-	var $fb = $('#feedback tbody tr td');
+	//var $fb = $('#feedback tbody tr td');
 
 	for (var i = 0; i < Planets.length; i++) {
 		gravityVectors[i] = new Vector;
@@ -90,8 +90,8 @@ function calculate_gravitational_forces()
 			var dMag = d.getMagnitude();
 			// $fb.text(Math.round( dMag - (r1 + r2)) );
 			if( dMag <= r1 + r2 ) {
-				collide(Planets[i], Planets[j]);
-				console.log(dMag);
+				collide(Planets[i], Planets[j], d);
+				// console.log(dMag);
 			}
 			else {
 				var Fmag = GRAVITY*m1*m2/Math.pow(dMag,2);
@@ -107,15 +107,29 @@ function calculate_gravitational_forces()
 	};
 }
 
-function collide(body1, body2) 
+// Arguments are the two colliding bodies and a vector of the distance between them
+function collide(body1, body2, d) 
 {
+	if (!d ) d = p2.getSum(p1.scale(-1));
+
+	var v1 = body1.velocity;
+	var v2 = body2.velocity;
+
+	var v1dotd = (v1.x*d.x + v1.y*d.y) / (v1.getMagnitude()*d.getMagnitude() );
+
 	var p1 = body1.velocity.scale(body1.mass);
 	var p2 = body2.velocity.scale(body2.mass);
 
-	var E1 = 0.5*body1.mass*Math.pow(body1.velocity.getMagnitude(),2)
+	var E1 = 0.5*( body1.mass*Math.pow(body1.velocity.getMagnitude(),2) +
+		body2.mass*Math.pow(body2.velocity.getMagnitude(),2) );
 
 	body1.velocity = p2.scale(1/body1.mass);
 	body2.velocity = p1.scale(1/body2.mass);
+
+	var E2 = 0.5*( body1.mass*Math.pow(body1.velocity.getMagnitude(),2) +
+		body2.mass*Math.pow(body2.velocity.getMagnitude(),2) );
+
+	console.log(E2 - E1);
 }
 
 $(document).ready(function(){
