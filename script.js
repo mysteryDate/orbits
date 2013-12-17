@@ -8,6 +8,7 @@ var GROW_TIME = 10000;
 
 // Number of pixels of escape before planet is deleted
 var BOUNDARY = 50; 
+var solid_border = true;
 
 var paper;
 var Planets = []; // An array containing all Planets
@@ -62,6 +63,17 @@ function draw()
 				'cx': p.x,
 				'cy': p.y
 			});
+		}
+		if(solid_border) {
+			var r = Planets[i].radius;
+			if(p.x - r <= 0)
+				Planets[i].velocity.x *= -1;
+			if(p.x + r >= windowWidth)
+				Planets[i].velocity.x *= -1;
+			if(p.y - r <= 0)
+				Planets[i].velocity.y *= -1;
+			if(p.y + r >= windowHeight)
+				Planets[i].velocity.y *= -1;
 		}
 	};
 }
@@ -222,6 +234,13 @@ function handlers() {
 				stopLoop();
 			else
 				loop();
+		}
+		if( e.which == 99) { // Clear on 'c'
+			for (var i = 0; i < Planets.length; i++) {
+				Planets[i].circle.remove();
+			};
+			Planets = [];
+
 		}
 	});
 }
