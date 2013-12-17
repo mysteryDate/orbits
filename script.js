@@ -86,7 +86,7 @@ function calculate_gravitational_forces()
 			var m2 = Planets[j].mass;
 			var p2 = Planets[j].position;
 			var r2 = Planets[j].radius;
-			var d = p2.getSum(p1.scale(-1));
+			var d = Vector.add(p2, p1.scale(-1));
 			var dMag = d.getMagnitude();
 			// $fb.text(Math.round( dMag - (r1 + r2)) );
 			if( dMag <= r1 + r2 ) {
@@ -110,7 +110,7 @@ function calculate_gravitational_forces()
 // Arguments are the two colliding bodies and a vector of the distance between them
 function collide(body1, body2, d) 
 {
-	if (!d ) d = p2.getSum(p1.scale(-1));
+	if (!d ) d = Vector.add(p2, p1.scale(-1));
 
 	var v1 = body1.velocity;
 	var v2 = body2.velocity;

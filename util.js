@@ -30,6 +30,7 @@ function Vector(x, y)
 		return sum;
 	}
 
+	// Returns a scaled version of the vector
 	this.scale = function(scalar) {
 		var x = this.x * scalar;
 		var y = this.y * scalar;
@@ -38,10 +39,23 @@ function Vector(x, y)
 	}
 }
 
+// Returns the sum of two vectors, A and B
+Vector.add = function(A, B) {
+	var x = A.x + B.x;
+	var y = A.y + B.y;
+	return new Vector(x, y);
+}
+
 // Creates a new vector given an angle and magnitude
 Vector.fromAngle = function(angle, magnitude) {
 	return new Vector(magnitude * Math.cos(angle), magnitude * Math.sin(angle));
 };
+
+// Returns the angle between two vectors, A and B
+Vector.angleBetween = function(A, B) {
+	// The dot product
+	var AdotB = (A.x * B.x) + (A.y * B.y);
+}
 
 // m, n are the dimensions of the matrix
 function Matrix2d(m, n)
