@@ -12,11 +12,13 @@ html, body {
 #container {
 	height: 100%;
 	width: 100%;
+	background-color: black;
 	/*border: 1px solid black;*/
 }
 
 circle {
-	fill: black ;
+	fill: blue ;
+	opacity: 0.5;
 }
 
 #feedback {

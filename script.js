@@ -1,14 +1,21 @@
 "use strict";
-var GRAVITY = 10; // A coefficient for our gravity
-// hint: Fg = G * m1 * m2 / r^2
-var DENSITY = 100; // Set a standard density for now.
-var TIME_STEP = 0.03; // One unit of time
-var MAX_SIZE = 100;
-var GROW_TIME = 10000;
+// --------------------
+// Variables
+// --------------------
+var GRAVITY = 10; 		// A coefficient for our gravity, hint: Fg = G * m1 * m2 / r^2
+var DENSITY = 100; 		// Set a standard density for now.
+var TIME_STEP = 0.03;	// One unit of time
+var MAX_SIZE = 100;		// Maximum raidus of a planet (pixels)
+var GROW_TIME = 10000;	// Time in ms for a planet to grow to full size
+var BOUNDARY = 50;		// Number of pixels of escape before planet is deleted
+var COLLISION_F = 0.99;	// Coefficient for energy maintained in collisions
+// ---------------------
 
-// Number of pixels of escape before planet is deleted
-var BOUNDARY = 50; 
-var solid_border = true;
+// ---------------------
+// Options
+// ---------------------
+var solid_border = true;	// Do planets reflect off the border?
+// ---------------------
 
 var paper;
 var Planets = []; // An array containing all Planets
@@ -67,13 +74,13 @@ function draw()
 		if(solid_border) {
 			var r = Planets[i].radius;
 			if(p.x - r <= 0)
-				Planets[i].velocity.x *= -1;
+				Planets[i].velocity.x *= -COLLISION_F;
 			if(p.x + r >= windowWidth)
-				Planets[i].velocity.x *= -1;
+				Planets[i].velocity.x *= -COLLISION_F;
 			if(p.y - r <= 0)
-				Planets[i].velocity.y *= -1;
+				Planets[i].velocity.y *= -COLLISION_F;
 			if(p.y + r >= windowHeight)
-				Planets[i].velocity.y *= -1;
+				Planets[i].velocity.y *= -COLLISION_F;
 		}
 	};
 }
@@ -130,19 +137,17 @@ function collide(b1, b2, d)
 	var E1 = 0.5*( b1.mass*Math.pow(b1.velocity.getMagnitude(),2) +
 		b2.mass*Math.pow(b2.velocity.getMagnitude(),2) );
 
-	// component of initial velocity projected onto d
+	// Component of initial velocity projected onto d
 	var u1d = d.scale( Vector.dotProduct(u1,d) / (Math.pow(d.getMagnitude(),2)) );
 	var u2d = d.scale( Vector.dotProduct(u2,d) / (Math.pow(d.getMagnitude(),2)) );
-	// var u1d = new Vector( Vector.dotProduct(b1.velocity, d.getUnitVector), Vector.angleBetween(b1.velocity, d) );
-	// var u2d = new Vector( Vector.dotProduct(b2.velocity, d.getUnitVector), Vector.angleBetween(b2.velocity, d) );
 
 	// Perpendicular components of initial velocities
 	var u1n = Vector.add(b1.velocity, u1d.scale(-1));
 	var u2n = Vector.add(b2.velocity, u2d.scale(-1));
 
-	// New parallel components
-	var v1d = ( Vector.add( u1d.scale(b1.mass - b2.mass), u2d.scale(2*b2.mass) ) ).scale(1/(b1.mass + b2.mass));
-	var v2d = ( Vector.add( u2d.scale(b2.mass - b1.mass), u1d.scale(2*b1.mass) ) ).scale(1/(b1.mass + b2.mass));
+	// Components along d after collision
+	var v1d = ( Vector.add( u1d.scale(b1.mass - b2.mass), u2d.scale(2*b2.mass) ) ).scale(COLLISION_F/(b1.mass + b2.mass));
+	var v2d = ( Vector.add( u2d.scale(b2.mass - b1.mass), u1d.scale(2*b1.mass) ) ).scale(COLLISION_F/(b1.mass + b2.mass));
 
 	var v1 = Vector.add(v1d, u1n);
 	var v2 = Vector.add(v2d, u2n);
