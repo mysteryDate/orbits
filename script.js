@@ -178,9 +178,10 @@ function create_planet(clickEvent)
 
 	var circle = paper.circle(x, y, 5);
 	circle.animate({'r': MAX_SIZE}, GROW_TIME);
+	
 	// Velocity path
 	var vPath = paper.path('M'+x+' '+y+'L'+x+' '+y);
-	vPath.attr('stroke','red');
+
 	var new_planet = new Planet(circle, new Vector(x,y));
 
 	$(paper.canvas).on('mousemove.create_planet', function(e)

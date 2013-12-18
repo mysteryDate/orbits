@@ -17,8 +17,11 @@ html, body {
 }
 
 circle {
-	fill: blue ;
-	opacity: 0.5;
+	fill: hsla(0, 98%, 66%, 0.8) ;
+}
+
+path {
+	stroke: white;
 }
 
 #feedback {
