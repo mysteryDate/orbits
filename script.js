@@ -17,16 +17,14 @@ var COLLISION_F = 0.99;	// Coefficient for energy maintained in collisions
 var solid_border = true;	// Do planets reflect off the border?
 // ---------------------
 
-var paper;
-var Planets = []; // An array containing all Planets
-var circle;
-var testCirc;
+var paper;				// The canvas
+var Planets = []; 		// An array containing all Planets
 
 var windowWidth = $(window).width();
 var windowHeight = $(window).height();
 
 var looping = false;
-var accelerationLines = false;
+// var accelerationLines = false;
 
 function loop() 
 {
@@ -60,17 +58,20 @@ function draw()
 {
 	for (var i = 0; i < Planets.length; i++) {
 		var p = Planets[i].position;
+		// Planet is deleted if it leaves the zone
 		if(p.x < 0 - BOUNDARY || p.x > windowWidth + BOUNDARY 
 				|| p.y < 0 - BOUNDARY || p.y > windowHeight + BOUNDARY) {
 			Planets[i].circle.remove();
 			Planets.splice(i,1);
 		}
+		// Move the planet
 		else {
 			Planets[i].circle.attr({
 				'cx': p.x,
 				'cy': p.y
 			});
 		}
+		// Planet reflects on borders with this option
 		if(solid_border) {
 			var r = Planets[i].radius;
 			if(p.x - r <= 0)
@@ -88,7 +89,7 @@ function draw()
 
 function calculate_gravitational_forces()
 {
-	// A Planets.length by Planets.length matrix of all gravity vectors
+	// A list of all gravitational force vectors for each planet
 	var gravityVectors = [];
 	//var $fb = $('#feedback tbody tr td');
 
@@ -116,13 +117,13 @@ function calculate_gravitational_forces()
 				var Fmag = GRAVITY*m1*m2/Math.pow(dMag,2);
 				var F = Vector.fromAngle(d.getAngle(), Fmag);
 				gravityVectors[i].add(F);
-				gravityVectors[j].add(F.scale(-1)); 
+				gravityVectors[j].add(F.scale(-1)); // It's Newton's third law, Patrick!
 			}
 		};
 
 		// var Fpath = paper.path('M'+p1.x+' '+p1.y+'L'+(p1.x+gravityVectors[i].x/10)+' '+(p1.y+gravityVectors[i].y/10));
 		// Fpath.attr('stroke', 'red');
-		Planets[i].acceleration = gravityVectors[i].scale(1/m1);
+		Planets[i].acceleration = gravityVectors[i].scale(1/m1);	// F = ma, bitches
 	};
 }
 
@@ -131,6 +132,7 @@ function collide(b1, b2, d)
 {
 	if (!d ) d = Vector.add(p2, p1.scale(-1));
 
+	// Initial velocities
 	var u1 = b1.velocity;
 	var u2 = b2.velocity;
 
@@ -145,10 +147,11 @@ function collide(b1, b2, d)
 	var u1n = Vector.add(b1.velocity, u1d.scale(-1));
 	var u2n = Vector.add(b2.velocity, u2d.scale(-1));
 
-	// Components along d after collision
+	// Components along d after collision, per conservation of energy and linear momentum
 	var v1d = ( Vector.add( u1d.scale(b1.mass - b2.mass), u2d.scale(2*b2.mass) ) ).scale(COLLISION_F/(b1.mass + b2.mass));
 	var v2d = ( Vector.add( u2d.scale(b2.mass - b1.mass), u1d.scale(2*b1.mass) ) ).scale(COLLISION_F/(b1.mass + b2.mass));
 
+	// Velocities after collision 
 	var v1 = Vector.add(v1d, u1n);
 	var v2 = Vector.add(v2d, u2n);
 
@@ -165,19 +168,17 @@ $(document).ready(function(){
 
 	paper = new Raphael('container', '100%', '100%'); 
 	handlers();
-
-	// loop();
-
 });
 
 function create_planet(clickEvent)
 {
+	// I don't think the offset works in Firefox
 	var x = clickEvent.offsetX;
 	var y = clickEvent.offsetY;
 
 	var circle = paper.circle(x, y, 5);
-	//circle.attr('fill', 'black');
 	circle.animate({'r': MAX_SIZE}, GROW_TIME);
+	// Velocity path
 	var vPath = paper.path('M'+x+' '+y+'L'+x+' '+y);
 	vPath.attr('stroke','red');
 	var new_planet = new Planet(circle, new Vector(x,y));
@@ -185,7 +186,6 @@ function create_planet(clickEvent)
 	$(paper.canvas).on('mousemove.create_planet', function(e)
 	{
 		vPath.attr('path', 'M'+x+' '+y+'L'+e.offsetX+' '+e.offsetY);
-		// console.log(e);
 	});
 	$(paper.canvas).on('mouseup.create_planet', function(e) 
 	{
