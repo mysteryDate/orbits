@@ -178,8 +178,12 @@ var PLANEMATOR = (function(){
 		vPath = paper.path('M' + x + ' ' + y + 
 			               'L' + x + ' ' + y);
 
-		new_planet = new Planet(circle, new Vector(x,y));
+		new_planet = new Planet({
+			circle   : circle, 
+			position : new Vector(x,y)
+		});
 
+		// NICE NAMSPACING BREUH!
 		$(paper.canvas).on('mousemove.create_planet', function(e) {
 			vPath.attr('path', 'M'+x+' '+y+'L'+e.offsetX+' '+e.offsetY);
 		});
