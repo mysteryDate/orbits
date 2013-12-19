@@ -55,7 +55,7 @@
 
 			$('body').on('keypress', function(e){
 				if (e.which == 32) {  // Spacebar
-					PLANEMATOR.looping ? PLANEMATOR.stopLoop() : PLANEMATOR.loop();
+					PLANEMATOR.isLooping() ? PLANEMATOR.stopLoop() : PLANEMATOR.loop();
 				}
 				if (e.which == 99) PLANEMATOR.clear(); // Clear on 'c'
 			});
