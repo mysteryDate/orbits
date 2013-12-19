@@ -31,11 +31,11 @@
 
 	<!-- Scripts -->
 	<script type="text/javascript" src="vector.js"></script>
-	<script type="text/javascript" src="script.js"></script>
+	<script type="text/javascript" src="PLANEMATOR.js"></script>
 	<script type="text/javascript" src="planet.js"></script>
 	<script>
 		$(function(){
-			$(ANIMATOR.paper.canvas).on({
+			$(PLANEMATOR.paper.canvas).on({
 				// mousemove: function(e){
 				// 	var feedback = [
 				// 		e.clientX,  e.clientY,
@@ -48,16 +48,16 @@
 				// 	});
 				// },
 				mousedown: function(e){
-					ANIMATOR.stopLoop();
-					ANIMATOR.create_planet(e);
+					PLANEMATOR.stopLoop();
+					PLANEMATOR.create_planet(e);
 				}
 			});
 
 			$('body').on('keypress', function(e){
 				if (e.which == 32) {  // Spacebar
-					ANIMATOR.looping ? ANIMATOR.stopLoop() : ANIMATOR.loop();
+					PLANEMATOR.looping ? PLANEMATOR.stopLoop() : PLANEMATOR.loop();
 				}
-				if (e.which == 99) ANIMATOR.clear(); // Clear on 'c'
+				if (e.which == 99) PLANEMATOR.clear(); // Clear on 'c'
 			});
 
 			window.onresize = function(e) {
