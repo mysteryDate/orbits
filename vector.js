@@ -1,7 +1,4 @@
-// My first utility function file!
-
-function Vector(x, y) 
-{
+function Vector(x, y) {
 	this.x = x || 0;
 	this.y = y || 0;
 
@@ -50,20 +47,4 @@ Vector.fromAngle = function(angle, magnitude) {
 
 Vector.dotProduct = function(A, B) {
 	return (A.x * B.x) + (A.y * B.y);
-}
-
-// A planet on the screen
-function Planet(circle, position, velocity, acceleration) 
-{
-	this.circle = circle; // The raphael object to which it is referred
-	this.position = position || new Vector(0,0);
-	this.velocity = velocity || new Vector(0,0);
-	this.acceleration = acceleration || new Vector(0,0);
-	this.mass;
-	this.radius;
-
-	this.move = function() {
-		this.velocity.add( this.acceleration.scale(TIME_STEP) );
-		this.position.add( this.velocity.scale(TIME_STEP) );
-	}
 }
