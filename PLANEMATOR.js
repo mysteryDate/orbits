@@ -41,7 +41,7 @@ var PLANEMATOR = (function(){
 
 	function stopLoop() {
 		looping = false;
-		window.cancelAnimationFrame(lastRequest);
+		if (lastRequest) window.cancelAnimationFrame(lastRequest);
 	}
 
 	function queue() {
