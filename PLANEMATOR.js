@@ -1,23 +1,9 @@
 "use strict";
 var PLANEMATOR = (function(){
-	// public methods:
-	//     loop()
-	//     stopLoop()
-	//     create_planet()
-	// proposed:
-	//     clear()
-
-	// public other stuff:
-	//     looping
-	//     Planets (not if we implement Clear)
-
-
 	// --------------------
 	// Variables
 	// --------------------
-	console.log('\tvar declars');
-	var exports		= {},	 // a place to store public methods and data	
-		paper       = new Raphael('container', '100%', '100%'),
+	var paper       = new Raphael('container', '100%', '100%'),
 		GRAVITY     = 10,    // A coefficient for our gravity, hint: Fg = G * m1 * m2 / r^2
 		DENSITY     = 100,   // Set a standard density for now.
 		TIME_STEP   = 0.03,  // One unit of time
@@ -32,7 +18,6 @@ var PLANEMATOR = (function(){
 	// ---------------------
 		solid_border = true, // Do planets reflect off the border?
 	// ---------------------
-
 		paper,               // The canvas
 		Planets      = [],   // An array containing all Planets
 
@@ -41,15 +26,17 @@ var PLANEMATOR = (function(){
 
 		looping      = false,
 		lastRequest;
-
-	console.log('\tafter var declars');
-	// var accelerationLines = false;
+		// accelerationLines = false;
 
 	function loop() {
 		looping = true;
 		update();
 		draw();
 		queue();
+	}
+
+	function isLooping() {
+		return looping;
 	}
 
 	function stopLoop() {
