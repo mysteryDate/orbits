@@ -1,6 +1,5 @@
 "use strict";
-var ANIMATOR = (function(){
-	console.log('ANIMATOR()');
+var PLANEMATOR = (function(){
 	// public methods:
 	//     loop()
 	//     stopLoop()
