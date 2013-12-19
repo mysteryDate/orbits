@@ -4,13 +4,6 @@
 	<!-- Stylesheet -->
 	<link rel="stylesheet" type="text/css" href="style.css">
 
-	<!-- JS Libraries -->
-	<script type="text/javascript" src="jquery.js"></script>
-	<script type="text/javascript" src="raphael.js"></script>
-
-	<!-- Scripts -->
-	<script type="text/javascript" src="util.js"></script>
-	<script type="text/javascript" src="script.js"></script>
 	
 	<title>ORBITALS!</title>
 </head>
@@ -32,11 +25,17 @@
 		</table>
 	</div> -->
 
+	<!-- JS Libraries -->
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="raphael.js"></script>
+
+	<!-- Scripts -->
+	<script type="text/javascript" src="vector.js"></script>
+	<script type="text/javascript" src="script.js"></script>
+	<script type="text/javascript" src="planet.js"></script>
 	<script>
 		$(function(){
-			paper = new Raphael('container', '100%', '100%'); 
-				
-			$(paper.canvas).on({
+			$(ANIMATOR.paper.canvas).on({
 				// mousemove: function(e){
 				// 	var feedback = [
 				// 		e.clientX,  e.clientY,
@@ -49,22 +48,16 @@
 				// 	});
 				// },
 				mousedown: function(e){
-					stopLoop();
-					create_planet(e);
+					ANIMATOR.stopLoop();
+					ANIMATOR.create_planet(e);
 				}
 			});
 
 			$('body').on('keypress', function(e){
 				if (e.which == 32) {  // Spacebar
-					if (looping) stopLoop();
-					else loop();
+					ANIMATOR.looping ? ANIMATOR.stopLoop() : ANIMATOR.loop();
 				}
-				if (e.which == 99) { // Clear on 'c'
-					Planets.forEach(function(planet){
-						planet.circle.remove();
-					});
-					Planets.length = 0;
-				}
+				if (e.which == 99) ANIMATOR.clear(); // Clear on 'c'
 			});
 
 			window.onresize = function(e) {
