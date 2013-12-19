@@ -1,7 +1,6 @@
 // My first utility function file!
 
-function Vector(x, y) 
-{
+function Vector(x, y) {
 	this.x = x || 0;
 	this.y = y || 0;
 
@@ -53,8 +52,7 @@ Vector.dotProduct = function(A, B) {
 }
 
 // A planet on the screen
-function Planet(circle, position, velocity, acceleration) 
-{
+function Planet(circle, position, velocity, acceleration) {
 	this.circle = circle; // The raphael object to which it is referred
 	this.position = position || new Vector(0,0);
 	this.velocity = velocity || new Vector(0,0);
