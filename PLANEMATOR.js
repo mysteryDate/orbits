@@ -200,19 +200,19 @@ var PLANEMATOR = (function(){
 
 			vPath.remove();
 			$(paper.canvas).off('.create_planet');
-			loop();
 		});
 
 		Planets.push(new_planet);
 	}
 
 	return {
-		TIME_STEP     : TIME_STEP,
-		loop          : loop,
-		looping       : looping,
-		stopLoop      : stopLoop,
-		clear         : clear,
-		create_planet : create_planet,
-		paper         : paper
+		TIME_STEP    	: TIME_STEP,
+		loop         	: loop,
+		looping      	: looping,
+		isLooping	 	: isLooping,
+		stopLoop     	: stopLoop,
+		clear        	: clear,
+		create_planet	: create_planet,
+		paper        	: paper
 	}
 })();

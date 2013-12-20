@@ -11,20 +11,6 @@
 
 	<div id="container"></div>
 
-	<!-- A table for numerical feedback if necesary -->
-	<!-- <div id='feedback'>
-		<table>
-			<thead>
-				<tr>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr><td></td></tr>
-			</tbody>
-		</table>
-	</div> -->
-
 	<!-- JS Libraries -->
 	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="raphael.js"></script>
@@ -36,19 +22,7 @@
 	<script>
 		$(function(){
 			$(PLANEMATOR.paper.canvas).on({
-				// mousemove: function(e){
-				// 	var feedback = [
-				// 		e.clientX,  e.clientY,
-				// 		e.pageX,    e.pageY,
-				// 		e.screenX,  e.screenY,
-				// 		e.offsetX,  e.offsetY];
-
-				// 	$('#feedbackTable td').each(function(i,e){
-				// 		$(this).text(feedback[i]);
-				// 	});
-				// },
 				mousedown: function(e){
-					PLANEMATOR.stopLoop();
 					PLANEMATOR.create_planet(e);
 				}
 			});
@@ -64,6 +38,8 @@
 				windowWidth  = $(window).width();
 				windowHeight = $(window).height();
 			}
+			// Now that planet creation no longer stops and starts looping, initialize it here.
+			PLANEMATOR.loop();
 		});
 	</script>
 
