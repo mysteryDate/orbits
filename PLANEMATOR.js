@@ -67,7 +67,25 @@ var PLANEMATOR = (function(){
 		var p, i;
 
 		Planets.forEach(function(planet, i){
+			// Planet reflects on borders with this option
+			if (solid_border) {
+				var r = planet.radius;
+				if(planet.position.x - r <= 0) {
+					planet.position.x = r;
+					planet.velocity.x *= -COLLISION_F; }
+				if(planet.position.y - r <= 0) {
+					planet.position.y = r;
+					planet.velocity.y *= -COLLISION_F; }
+				if(planet.position.x + r >= windowWidth) {
+					planet.position.x = windowWidth - r;
+					planet.velocity.x *= -COLLISION_F; }
+				if(planet.position.y + r >= windowHeight) { 
+					planet.position.y = windowHeight - r;
+					planet.velocity.y *= -COLLISION_F; }
+			}
+
 			p = planet.position;
+			
 			// Planet is deleted if it leaves the zone
 			if (   p.x < 0 - BOUNDARY 
 				|| p.x > windowWidth + BOUNDARY 
@@ -79,15 +97,6 @@ var PLANEMATOR = (function(){
 
 			// Move the planet
 			else planet.circle.attr({'cx': p.x, 'cy': p.y});
-
-			// Planet reflects on borders with this option
-			if (solid_border) {
-				var r = planet.radius;
-				if(p.x - r <= 0) planet.velocity.x *= -COLLISION_F;
-				if(p.y - r <= 0) planet.velocity.y *= -COLLISION_F;
-				if(p.x + r >= windowWidth)  planet.velocity.x *= -COLLISION_F;
-				if(p.y + r >= windowHeight) planet.velocity.y *= -COLLISION_F;
-			}
 		});
 	}
 
@@ -225,6 +234,7 @@ var PLANEMATOR = (function(){
 		stopLoop     	: stopLoop,
 		clear        	: clear,
 		create_planet	: create_planet,
+		solid_border	: solid_border,
 		paper        	: paper
 	}
 })();
