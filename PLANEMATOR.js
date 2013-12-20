@@ -165,9 +165,9 @@ var PLANEMATOR = (function(){
 	}
 
 	function create_planet(clickEvent) {
-		// I don't think the offset works in Firefox
-		var x      = clickEvent.offsetX,
-			y      = clickEvent.offsetY,
+
+		var p = get_offset(clickEvent), 
+			x = p[0], y = p[1],
 			vPath,
 			new_planet,
 			circle = paper.circle(x, y, 5);
@@ -184,14 +184,16 @@ var PLANEMATOR = (function(){
 		});
 
 		// NICE NAMSPACING BREUH!
-		$(paper.canvas).on('mousemove.create_planet', function(e) {
-			vPath.attr('path', 'M'+x+' '+y+'L'+e.offsetX+' '+e.offsetY);
+		$(paper.canvas).on('mousemove.create_planet', function(moveEvent) {
+			var np  = get_offset(moveEvent);
+			vPath.attr('path', 'M'+x+' '+y+'L'+np[0]+' '+np[1]);
 		});
-		$(paper.canvas).on('mouseup.create_planet', function(e) {
-			circle.stop();
+		$(paper.canvas).on('mouseup.create_planet', function(mouseupEvent) {
+			var np 	= get_offset(mouseupEvent),
+				v 	= new Vector(np[0] - x, np[1] - y),
+				r 	= circle.attr('r');
 
-			var v = new Vector(e.offsetX - x, e.offsetY - y),
-				r = circle.attr('r');
+			circle.stop();
 
 			new_planet.velocity = v;
 			new_planet.acceleration = new Vector(0, 0);
@@ -203,6 +205,16 @@ var PLANEMATOR = (function(){
 		});
 
 		Planets.push(new_planet);
+	}
+
+	// A polyfill function for offset bugs in SVG and Firefox (when used with jQuery)
+	// Not sure if this works in all browsers
+	function get_offset(event) {
+		var x 	= (event.offsetX || event.pageX - event.target.clientLeft),
+			y 	= (event.offsetY || event.pageY - event.target.clientTop),
+			pos = [x, y];
+
+		return pos;
 	}
 
 	return {
