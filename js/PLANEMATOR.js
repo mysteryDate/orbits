@@ -226,6 +226,44 @@ var PLANEMATOR = (function(){
 		return pos;
 	}
 
+	// Add two planets to start, if necessary
+	function seed(){
+		var r = windowWidth/20;
+		var x = windowWidth/2;
+		var y = windowHeight/2;
+		var p1 = new Planet({
+			position : new Vector(x,y),
+			circle : paper.circle(x, y, r),
+			radius : r,
+			mass   : DENSITY*Math.PI*r*r
+		});
+		Planets.push(p1);
+
+		r /= 8;
+		x += windowWidth/5;
+		var v = new Vector(0, windowWidth/6);
+		var p2 = new Planet({
+			position : new Vector(x,y),
+			circle : paper.circle(x, y, r),
+			radius : r,
+			mass   : DENSITY*Math.PI*r*r,
+			velocity : v
+		});
+		Planets.push(p2);
+
+		r /= 2;
+		x -= windowWidth/10;
+		var v = new Vector(0, -windowWidth/3.5);
+		var p3 = new Planet({
+			position : new Vector(x,y),
+			circle : paper.circle(x, y, r),
+			radius : r,
+			mass   : DENSITY*Math.PI*r*r,
+			velocity : v
+		});
+		Planets.push(p3);
+	}
+
 	return {
 		TIME_STEP    	: TIME_STEP,
 		loop         	: loop,
@@ -235,6 +273,7 @@ var PLANEMATOR = (function(){
 		clear        	: clear,
 		create_planet	: create_planet,
 		solid_border	: solid_border,
-		paper        	: paper
+		paper        	: paper,
+		seed 			: seed
 	}
 })();

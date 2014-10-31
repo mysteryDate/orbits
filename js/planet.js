@@ -4,8 +4,8 @@ function Planet(options) {
 	this.position     = options.position     || new Vector(0,0);
 	this.velocity     = options.velocity     || new Vector(0,0);
 	this.acceleration = options.acceleration || new Vector(0,0);
-	this.mass;
-	this.radius;
+	this.mass 	      = options.mass 		 || 0
+	this.radius		  = options.radius 		 || 0
 
 	this.move = function() {
 		this.velocity.add( this.acceleration.scale(PLANEMATOR.TIME_STEP) );
