@@ -63,6 +63,12 @@ var PLANEMATOR = (function(){
 		Planets.length = 0;
 	}
 
+	function remove(planet) {
+		var index = Planets.indexOf(planet);
+		planet.circle.remove();
+		Planets.splice(index,1);
+	}
+
 	function draw() {
 		var p, i;
 
@@ -126,7 +132,21 @@ var PLANEMATOR = (function(){
 				dMag = d.getMagnitude();
 
 				if( dMag <= r1 + r2 ) {
-					collide(planet1, Planets[j], d);
+					// Absorb if the smaller planet's falls inside the larger one
+					if( dMag <= Math.max(r1, r2)) {
+						// Which is the larger planet?
+						if( m1 > m2 ) {
+							planet1.absorb(Planets[j]);
+							remove(Planets[j]);
+						}
+						else {
+							Planets[j].absorb(planet1);
+							remove(planet1);
+						}
+					}
+					else {
+						collide(planet1, Planets[j], d);
+					}
 				}
 				else {
 					Fmag = GRAVITY*m1*m2/Math.pow(dMag,2);
@@ -274,6 +294,7 @@ var PLANEMATOR = (function(){
 		create_planet	: create_planet,
 		solid_border	: solid_border,
 		paper        	: paper,
-		seed 			: seed
+		seed 			: seed,
+		Planets 		: Planets
 	}
 })();

@@ -11,4 +11,11 @@ function Planet(options) {
 		this.velocity.add( this.acceleration.scale(PLANEMATOR.TIME_STEP) );
 		this.position.add( this.velocity.scale(PLANEMATOR.TIME_STEP) );
 	}
+
+	this.absorb = function(small_planet) {
+		// TODO: figure out what happens to velocity and acceleration
+		this.mass 	+= small_planet.mass;
+		this.radius += small_planet.radius;
+		this.circle.attr('r', this.radius);
+	}
 }
