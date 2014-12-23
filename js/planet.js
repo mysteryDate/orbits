@@ -15,7 +15,10 @@ function Planet(options) {
 	this.absorb = function(small_planet) {
 		// TODO: figure out what happens to velocity and acceleration
 		this.mass 	+= small_planet.mass;
-		this.radius += small_planet.radius;
+		// Areas combine, the square of the radius
+		// Should be the cubes, but we're in 2d!
+		this.radius = Math.pow( 
+			Math.pow(small_planet.radius,2) + Math.pow(this.radius,2), 1/2);
 		this.circle.attr('r', this.radius);
 	}
 }

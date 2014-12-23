@@ -17,7 +17,8 @@ html, body {
 }
 
 circle {
-	fill: hsla(0, 98%, 66%, 0.8) ;
+	fill: hsla(0, 98%, 66%, 0.8);
+	stroke: none;
 }
 
 path {
