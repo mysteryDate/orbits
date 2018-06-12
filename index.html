@@ -1,48 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<!-- Stylesheet -->
-	<link rel="stylesheet" type="text/css" href="style.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" type="text/css" href="style.css">
 
-	
-	<title>ORBITALS!</title>
+
+  <title>ORBITALS!</title>
 </head>
 <body>
 
-	<div id="container"></div>
+  <div id="container"></div>
 
-	<!-- JS Libraries -->
-	<script type="text/javascript" src="includes/jquery-2.0.3.min.js"></script>
-	<script type="text/javascript" src="includes/raphael.js"></script>
+  <!-- JS Libraries -->
+  <script type="text/javascript" src="includes/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="includes/raphael.js"></script>
 
-	<!-- Scripts -->
-	<script type="text/javascript" src="js/vector.js"></script>
-	<script type="text/javascript" src="js/PLANEMATOR.js"></script>
-	<script type="text/javascript" src="js/planet.js"></script>
-	<script>
-		$(function(){
-			$(PLANEMATOR.paper.canvas).on({
-				mousedown: function(e){
-					PLANEMATOR.create_planet(e);
-				}
-			});
+  <!-- Scripts -->
+  <script type="text/javascript" src="js/vector.js"></script>
+  <script type="text/javascript" src="js/PLANEMATOR.js"></script>
+  <script type="text/javascript" src="js/planet.js"></script>
+  <script>
+    $(function(){
+      $(PLANEMATOR.paper.canvas).on({
+        mousedown: function(e){
+          PLANEMATOR.create_planet(e);
+        }
+      });
 
-			$('body').on('keypress', function(e){
-				if (e.which == 32) {  // Spacebar
-					PLANEMATOR.isLooping() ? PLANEMATOR.stopLoop() : PLANEMATOR.loop();
-				}
-				if (e.which == 99) PLANEMATOR.clear(); // Clear on 'c'
-			});
+      $('body').on('keypress', function(e){
+        if (e.which == 32) {  // Spacebar
+          PLANEMATOR.isLooping() ? PLANEMATOR.stopLoop() : PLANEMATOR.loop();
+        }
+        if (e.which == 99) PLANEMATOR.clear(); // Clear on 'c'
+      });
 
-			window.onresize = function(e) {
-				windowWidth  = $(window).width();
-				windowHeight = $(window).height();
-			}
-			// Now that planet creation no longer stops and starts looping, initialize it here.
-			PLANEMATOR.seed();
-			PLANEMATOR.loop();
-		});
-	</script>
+      window.onresize = function(e) {
+        windowWidth  = $(window).width();
+        windowHeight = $(window).height();
+      }
+      // Now that planet creation no longer stops and starts looping, initialize it here.
+      PLANEMATOR.seed();
+      PLANEMATOR.loop();
+    });
+  </script>
 
 </body>
 </html>
