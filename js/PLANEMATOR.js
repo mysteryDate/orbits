@@ -4,7 +4,7 @@ var PLANEMATOR = (function(){
   // Variables
   // --------------------
   var paper       = new Raphael('container', '100%', '100%'),
-    GRAVITY     = 10,    // A coefficient for our gravity, hint: Fg = G * m1 * m2 / r^2
+    GRAVITY     = 20,    // A coefficient for our gravity, hint: Fg = G * m1 * m2 / r^2
     DENSITY     = 200,   // Set a standard density for now.
     TIME_STEP   = 0.03,  // One unit of time
     MAX_SIZE    = 100,   // Maximum raidus of a planet (pixels)
@@ -247,41 +247,64 @@ var PLANEMATOR = (function(){
   }
 
   // Add two planets to start, if necessary
-  function seed(){
-    var r = windowWidth/20;
-    var x = windowWidth/2;
-    var y = windowHeight/2;
-    var p1 = new Planet({
-      position : new Vector(x,y),
-      circle : paper.circle(x, y, r),
-      radius : r,
-      mass   : DENSITY*Math.PI*r*r
-    });
-    Planets.push(p1);
+  function seed(mode){
+    if (mode === undefined || mode === 0) {
+      var r = windowWidth/20;
+      var x = windowWidth/2;
+      var y = windowHeight/2;
+      var p1 = new Planet({
+        position : new Vector(x,y),
+        circle : paper.circle(x, y, r),
+        radius : r,
+        mass   : DENSITY*Math.PI*r*r
+      });
+      Planets.push(p1);
 
-    r /= 8;
-    x += windowWidth/5;
-    var v = new Vector(0, windowWidth/6);
-    var p2 = new Planet({
-      position : new Vector(x,y),
-      circle : paper.circle(x, y, r),
-      radius : r,
-      mass   : DENSITY*Math.PI*r*r,
-      velocity : v
-    });
-    Planets.push(p2);
+      r /= 8;
+      x += windowWidth/5;
+      var v = new Vector(0, windowWidth/6);
+      var p2 = new Planet({
+        position : new Vector(x,y),
+        circle : paper.circle(x, y, r),
+        radius : r,
+        mass   : DENSITY*Math.PI*r*r,
+        velocity : v
+      });
+      Planets.push(p2);
 
-    r /= 2;
-    x -= windowWidth/10;
-    var v = new Vector(0, -windowWidth/3.5);
-    var p3 = new Planet({
-      position : new Vector(x,y),
-      circle : paper.circle(x, y, r),
-      radius : r,
-      mass   : DENSITY*Math.PI*r*r,
-      velocity : v
-    });
-    Planets.push(p3);
+      r /= 2;
+      x -= windowWidth/10;
+      var v = new Vector(0, -windowWidth/3.5);
+      var p3 = new Planet({
+        position : new Vector(x,y),
+        circle : paper.circle(x, y, r),
+        radius : r,
+        mass   : DENSITY*Math.PI*r*r,
+        velocity : v
+      });
+      Planets.push(p3);
+    }
+    if (mode === 1) {
+      const numX = 20;
+      const numY = 20;
+      const r = 0.3;
+      for (let i = 0; i < numX; i++) {
+        for (let j = 0; j < numY; j++) {
+          let px = 100/numX * i + windowWidth/2;
+          let py = 100/numY * j + windowHeight/2;
+          let vx = 3 * (px - windowWidth/2 - 50);
+          let vy = 3 * (py - windowHeight/2 - 50);
+          let planet = new Planet({
+            position: new Vector(px, py),
+            circle: paper.circle(px, py, 1),
+            radius: r,
+            mass: DENSITY*Math.PI*r*r,
+            velocity: new Vector(vx, vy),
+          });
+          Planets.push(planet);
+        }
+      }
+    }
   }
 
   return {

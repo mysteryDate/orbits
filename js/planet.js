@@ -8,7 +8,7 @@ function Planet(options) {
   this.radius      = options.radius      || 0
 
   this.move = function() {
-    this.velocity.add( this.acceleration.scale(PLANEMATOR.TIME_STEP) );
+  this.velocity.add( this.acceleration.scale(PLANEMATOR.TIME_STEP) );
     this.position.add( this.velocity.scale(PLANEMATOR.TIME_STEP) );
   }
 
